@@ -7,6 +7,7 @@ extends CharacterBody3D
 @export_subgroup("Weapons")
 @export var weapons: Array[Weapon] = []
 
+@export var held_object: RigidBody3D
 var weapon: Weapon
 var weapon_index := 0
 
@@ -161,7 +162,25 @@ func handle_controls(_delta):
 	# Weapon switching
 	
 	action_weapon_toggle()
+	
+	# Picking up items
+	item_pick_up()
 
+func item_pick_up():
+	if Input.is_action_just_pressed("pick_up"):
+		if held_object:
+			# This could cause issues in future if ever we have more than 1 collision layer going on
+			held_object.collision_layer = 1 
+			#TODO: is there a more general way of turning on and off a collision object?
+			# maybe using by disabling the child colllision shape? how do you get that here?
+			held_object.show()
+			held_object.position = position #TODO: make this spawn ahead of the player rather than just like... in them
+			held_object = null
+		else: 
+			if raycast.get_collider() and raycast.get_collider().get_class() == "RigidBody3D":
+				held_object = raycast.get_collider()
+				held_object.hide()
+				held_object.collision_layer = 0
 # Handle gravity
 
 func handle_gravity(delta):
