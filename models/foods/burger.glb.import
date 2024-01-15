@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/burger.glb-e3e7586ad3f0ad872fadde57011da2df.s
 
 [params]
 
-nodes/root_type=""
+nodes/root_type="RigidBody3D"
 nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0

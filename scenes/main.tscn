@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dxvvlck8lej3f"]
+[gd_scene load_steps=15 format=3 uid="uid://dxvvlck8lej3f"]
 
 [ext_resource type="Environment" uid="uid://jvmpkdwaeaq" path="res://scenes/main-environment.tres" id="1_q8fpv"]
 [ext_resource type="PackedScene" uid="uid://dl2ed4gkybggf" path="res://objects/player.tscn" id="2_elriq"]
@@ -9,8 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://c71evdjblk5wp" path="res://objects/wall_high.tscn" id="7_cabne"]
 [ext_resource type="PackedScene" uid="uid://bvx5cvigosg0s" path="res://objects/platform_large_grass.tscn" id="7_wggef"]
 [ext_resource type="PackedScene" uid="uid://d2g78tpqbyf5g" path="res://objects/enemy.tscn" id="8_7ty2f"]
-[ext_resource type="PackedScene" uid="uid://c002mhjghb6xd" path="res://components/banana.tscn" id="11_7dvpg"]
-[ext_resource type="PackedScene" uid="uid://bf2op1vmqkj66" path="res://components/bed.tscn" id="12_i65h1"]
+[ext_resource type="PackedScene" uid="uid://c3sngf53mg0xa" path="res://models/foods/apple.glb" id="13_gys42"]
+[ext_resource type="PackedScene" uid="uid://b636mvkt2t7xs" path="res://models/foods/cookingKnife.glb" id="13_msl6i"]
+[ext_resource type="PackedScene" uid="uid://48ggng3yuod8" path="res://models/foods/donutChocolate.glb" id="18_wwkle"]
+[ext_resource type="PackedScene" uid="uid://cn22yicduuuak" path="res://components/golder.tscn" id="19_idvi8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_fpmwk"]
 font = ExtResource("3_w27de")
@@ -121,10 +123,20 @@ transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, 
 
 [node name="Decoration" type="Node" parent="."]
 
-[node name="bed" parent="." instance=ExtResource("12_i65h1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02829, 0, 1.01894)
+[node name="Goldable Testing Items" type="Node" parent="."]
 
-[node name="banana" parent="." instance=ExtResource("11_7dvpg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, 5)
+[node name="apple2" parent="Goldable Testing Items" instance=ExtResource("13_gys42")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.100596, 1.04179, 0.909125)
+
+[node name="golder" parent="Goldable Testing Items/apple2" instance=ExtResource("19_idvi8")]
+
+[node name="donutChocolate2" parent="Goldable Testing Items" instance=ExtResource("18_wwkle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.272535, 0.705429, 0)
+
+[node name="golder" parent="Goldable Testing Items/donutChocolate2" instance=ExtResource("19_idvi8")]
+
+[node name="cookingKnife2" parent="Goldable Testing Items" instance=ExtResource("13_msl6i")]
+
+[node name="golder" parent="Goldable Testing Items/cookingKnife2" instance=ExtResource("19_idvi8")]
 
 [connection signal="health_updated" from="Player" to="HUD" method="_on_health_updated"]

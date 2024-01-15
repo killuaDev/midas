@@ -177,7 +177,7 @@ func item_pick_up():
 			held_object.position = position #TODO: make this spawn ahead of the player rather than just like... in them
 			held_object = null
 		else: 
-			if raycast.get_collider() and raycast.get_collider().get_class() == "RigidBody3D":
+			if raycast.get_collider() and raycast.get_collider() is RigidBody3D:
 				held_object = raycast.get_collider()
 				held_object.hide()
 				held_object.collision_layer = 0

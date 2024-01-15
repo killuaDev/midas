@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dii8csgn16scy"
-path="res://.godot/imported/bottleKetchup.glb-5b850304ca7f497b657e19a07fd41635.scn"
+path="res://.godot/imported/bottleKetchup-rigid.glb-046bcd1d040c2eab675f5f2c03c85c9f.scn"
 
 [deps]
 
-source_file="res://models/foods/bottleKetchup.glb"
-dest_files=["res://.godot/imported/bottleKetchup.glb-5b850304ca7f497b657e19a07fd41635.scn"]
+source_file="res://models/foods/bottleKetchup-rigid.glb"
+dest_files=["res://.godot/imported/bottleKetchup-rigid.glb-046bcd1d040c2eab675f5f2c03c85c9f.scn"]
 
 [params]
 
@@ -29,6 +29,14 @@ animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
 import_script/path=""
-_subresources={}
+_subresources={
+"nodes": {
+"PATH:bottleKetchup": {
+"generate/physics": true,
+"physics/body_type": 1,
+"physics/shape_type": 1
+}
+}
+}
 gltf/naming_version=1
 gltf/embedded_image_handling=1

@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://cn22yicduuuak"]
+
+[ext_resource type="Script" path="res://scripts/golder.gd" id="1_wrcw3"]
+[ext_resource type="Material" uid="uid://dyve8apqedocw" path="res://components/gold_material.tres" id="2_68uv3"]
+
+[node name="golder" type="Node"]
+script = ExtResource("1_wrcw3")
+gold_texture = ExtResource("2_68uv3")
