@@ -7,6 +7,7 @@ extends CharacterBody3D
 @export_subgroup("Weapons")
 @export var weapons: Array[Weapon] = []
 
+@export_subgroup("Items")
 @export var held_object: RigidBody3D
 var weapon: Weapon
 var weapon_index := 0
@@ -41,6 +42,7 @@ signal health_updated
 @onready var container = $Head/Camera/SubViewportContainer/SubViewport/CameraItem/Container
 @onready var sound_footsteps = $SoundFootsteps
 @onready var blaster_cooldown = $Cooldown
+@onready var held_item_container = $Head/Camera/held_item_container
 
 @export var crosshair:TextureRect
 
@@ -104,6 +106,12 @@ func _physics_process(delta):
 	if position.y < -10:
 		get_tree().reload_current_scene()
 
+	# TODO: make held object move around with player?
+	# it currently has a rigidbody, do I need to disable that so that it doesn't falll down?
+	if held_object:
+		
+		#held_object.position = position
+		pass
 # Mouse movement
 
 func _input(event):
@@ -169,18 +177,25 @@ func handle_controls(_delta):
 func item_pick_up():
 	if Input.is_action_just_pressed("pick_up"):
 		if held_object:
+			held_object.reparent(get_parent(), true)
+			held_object.process_mode = Node.PROCESS_MODE_ALWAYS
 			# This could cause issues in future if ever we have more than 1 collision layer going on
 			held_object.collision_layer = 1 
-			#TODO: is there a more general way of turning on and off a collision object?
-			# maybe using by disabling the child colllision shape? how do you get that here?
-			held_object.show()
-			held_object.position = position #TODO: make this spawn ahead of the player rather than just like... in them
 			held_object = null
-		else: 
-			if raycast.get_collider() and raycast.get_collider() is RigidBody3D:
+		else:
+			# TODO: make this a better check of whether something can be picked up
+			if raycast.get_collider() is RigidBody3D:
 				held_object = raycast.get_collider()
-				held_object.hide()
-				held_object.collision_layer = 0
+				print("picking up ", held_object.name, held_object.get_class())
+				held_object.reparent(held_item_container, false)
+				held_object.position = Vector3()
+				
+				# Stop the held item from getting physics processing
+				held_object.process_mode = Node.PROCESS_MODE_DISABLED
+				
+				# Turn the item gold
+				# TODO: I have no idea what happens here if the held_item doesn't have a golder component
+				held_object.get_node('golder').turn_gold()
 # Handle gravity
 
 func handle_gravity(delta):

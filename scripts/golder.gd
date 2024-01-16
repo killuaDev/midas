@@ -3,16 +3,14 @@
 # currently it turns things gold based on a keybind, but I'll probably make it
 # signal based soon
 extends Node
+class_name Golder
 @export var gold_texture: Resource
 @onready var meshes: Array[Node]
 var parent: Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	parent = get_parent()
-	print("Parent: ")
-	print(parent.name)
-	meshes = parent.find_children("*", "MeshInstance3D")
+	meshes = find_children("*", "MeshInstance3D")
 	print("Meshes length: ", len(meshes))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

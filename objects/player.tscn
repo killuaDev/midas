@@ -28,7 +28,11 @@ cull_mask = 1048573
 current = true
 fov = 80.0
 
+[node name="held_item_container" type="Node3D" parent="Head/Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.253708, -0.646264, -0.297063)
+
 [node name="SubViewportContainer" type="SubViewportContainer" parent="Head/Camera"]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -41,17 +45,20 @@ transparent_bg = true
 handle_input_locally = false
 msaa_3d = 1
 size = Vector2i(1280, 720)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="CameraItem" type="Camera3D" parent="Head/Camera/SubViewportContainer/SubViewport"]
+visible = false
 cull_mask = 1047554
 fov = 40.0
 
 [node name="Container" type="Node3D" parent="Head/Camera/SubViewportContainer/SubViewport/CameraItem"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, -1, -2.25)
+visible = false
 
 [node name="Muzzle" type="AnimatedSprite3D" parent="Head/Camera/SubViewportContainer/SubViewport/CameraItem"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -0.75, -6)
+visible = false
 layers = 2
 sprite_frames = ExtResource("4_m6ukc")
 frame = 2
