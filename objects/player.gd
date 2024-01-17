@@ -173,6 +173,18 @@ func handle_controls(_delta):
 	
 	# Picking up items
 	item_pick_up()
+	
+	# Basic throwing
+	# TODO: there's probably a lot of tuning to do here to make the throws
+	# feel right, but I'll leave that for now
+	if Input.is_action_just_pressed("throw"):
+		if held_object:
+			held_object.reparent(get_parent_node_3d())
+			held_object.global_position = camera.global_position
+			held_object.process_mode = Node.PROCESS_MODE_ALWAYS
+			held_object.collision_layer = 1
+			held_object.apply_central_impulse(-camera.global_transform.basis.z * 70)
+			held_object = null
 
 func item_pick_up():
 	if Input.is_action_just_pressed("pick_up"):

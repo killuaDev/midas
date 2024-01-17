@@ -29,7 +29,7 @@ current = true
 fov = 80.0
 
 [node name="held_item_container" type="Node3D" parent="Head/Camera"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.253708, -0.646264, -0.297063)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.530152, -0.478947, -0.452939)
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="Head/Camera"]
 visible = false
