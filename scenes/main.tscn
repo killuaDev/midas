@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dxvvlck8lej3f"]
+[gd_scene load_steps=14 format=3 uid="uid://dxvvlck8lej3f"]
 
 [ext_resource type="Environment" uid="uid://jvmpkdwaeaq" path="res://scenes/main-environment.tres" id="1_q8fpv"]
 [ext_resource type="PackedScene" uid="uid://dl2ed4gkybggf" path="res://objects/player.tscn" id="2_elriq"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bvx5cvigosg0s" path="res://objects/platform_large_grass.tscn" id="7_wggef"]
 [ext_resource type="PackedScene" uid="uid://d2g78tpqbyf5g" path="res://objects/enemy.tscn" id="8_7ty2f"]
 [ext_resource type="PackedScene" uid="uid://c0s75mumsh7i" path="res://objects/apple.tscn" id="11_nqxyl"]
+[ext_resource type="PackedScene" uid="uid://bbf8k6lf4kwmp" path="res://objects/pistol.tscn" id="12_2pave"]
 [ext_resource type="PackedScene" uid="uid://kiyswduaacf1" path="res://objects/wine_glass.tscn" id="17_2trf3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_fpmwk"]
@@ -126,5 +127,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0609431, 1.3367, 0.702724)
 
 [node name="apple" parent="." instance=ExtResource("11_nqxyl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.443587, 0.585802, 0.956913)
+
+[node name="pistol" parent="." instance=ExtResource("12_2pave")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.19209e-07, 3.81316, 1.22624)
 
 [connection signal="health_updated" from="Player" to="HUD" method="_on_health_updated"]

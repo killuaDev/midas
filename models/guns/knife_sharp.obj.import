@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ydiss4ndp28g"
+path="res://.godot/imported/knife_sharp.obj-22b23faa06afe4c3d9ad53ee1f5d15d1.mesh"
+
+[deps]
+
+files=["res://.godot/imported/knife_sharp.obj-22b23faa06afe4c3d9ad53ee1f5d15d1.mesh"]
+
+source_file="res://models/guns/knife_sharp.obj"
+dest_files=["res://.godot/imported/knife_sharp.obj-22b23faa06afe4c3d9ad53ee1f5d15d1.mesh", "res://.godot/imported/knife_sharp.obj-22b23faa06afe4c3d9ad53ee1f5d15d1.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

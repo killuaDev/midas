@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbf8k6lf4kwmp"]
+
+[ext_resource type="ArrayMesh" uid="uid://d12bsuv1yeck0" path="res://models/guns/pistol.obj" id="1_58qhf"]
+[ext_resource type="Script" path="res://objects/pistol.gd" id="1_7377t"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2umek"]
+size = Vector3(0.282959, 0.407288, 0.479858)
+
+[node name="pistol" type="RigidBody3D"]
+script = ExtResource("1_7377t")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+mesh = ExtResource("1_58qhf")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00842285, 0.00741577, 0.00274658)
+shape = SubResource("BoxShape3D_2umek")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0

@@ -121,7 +121,7 @@ func _input(event):
 		
 		rotation_target.y -= event.relative.x / mouse_sensitivity
 		rotation_target.x -= event.relative.y / mouse_sensitivity
-
+  
 func handle_controls(_delta):
 	
 	# Mouse capture
@@ -176,7 +176,7 @@ func handle_controls(_delta):
 	
 	# Basic throwing
 	# TODO: there's probably a lot of tuning to do here to make the throws
-	# feel right, but I'll leave that for now
+	# feel right, but I'll leave that for now5
 	if Input.is_action_just_pressed("throw"):
 		if held_object:
 			held_object.reparent(get_parent_node_3d())
@@ -207,7 +207,9 @@ func item_pick_up():
 				
 				# Turn the item gold
 				# TODO: I have no idea what happens here if the held_item doesn't have a golder component
-				held_object.get_node('golder').turn_gold()
+				var golder = held_object.get_node('golder')
+				if golder:
+					golder.turn_gold()
 # Handle gravity
 
 func handle_gravity(delta):
@@ -231,56 +233,73 @@ func action_jump():
 # Shooting
 
 func action_shoot():
-	
-	if Input.is_action_pressed("shoot"):
-	
-		if !blaster_cooldown.is_stopped(): return # Cooldown for shooting
+	# TODO: could turn this into a class check for like a gun class?
+	if Input.is_action_pressed("shoot") and held_object is Pistol:
+		var pistol = held_object as Pistol
+		# TODO: currently unsure how much code should be here and how much code in the
+		# pistol.gd script, we'll adjust as needed
+		if pistol.current_ammo <= 0 or pistol.timer.time_left > 0:
+			# TODO: reload / out of ammo indication
+			print("not shooting because of ammo or cooldown")
+			return
+		var collider = raycast.get_collider()
 		
-		Audio.play(weapon.sound_shoot)
+		## Hitting an enemy
+		if collider and collider.has_method("damage"):
+			collider.damage(weapon.damage)
+			
+		pistol.current_ammo -= 1
+		pistol.timer.start()
 		
-		container.position.z += 0.25 # Knockback of weapon visual
-		camera.rotation.x += 0.025 # Knockback of camera
-		movement_velocity += Vector3(0, 0, weapon.knockback) # Knockback
-		
-		# Set muzzle flash position, play animation
-		
-		muzzle.play("default")
-		
-		muzzle.rotation_degrees.z = randf_range(-45, 45)
-		muzzle.scale = Vector3.ONE * randf_range(0.40, 0.75)
-		muzzle.position = container.position - weapon.muzzle_position
-		
-		blaster_cooldown.start(weapon.cooldown)
+	#if Input.is_action_pressed("shoot"):
+	#
+		#if !blaster_cooldown.is_stopped(): return # Cooldown for shooting
+		#
+		#Audio.play(weapon.sound_shoot)
+		#
+		#container.position.z += 0.25 # Knockback of weapon visual
+		#camera.rotation.x += 0.025 # Knockback of camera
+		#movement_velocity += Vector3(0, 0, weapon.knockback) # Knockback
+		#
+		## Set muzzle flash position, play animation
+		#
+		#muzzle.play("default")
+		#
+		#muzzle.rotation_degrees.z = randf_range(-45, 45)
+		#muzzle.scale = Vector3.ONE * randf_range(0.40, 0.75)
+		#muzzle.position = container.position - weapon.muzzle_position
+		#
+		#blaster_cooldown.start(weapon.cooldown)
 		
 		# Shoot the weapon, amount based on shot count
 		
-		for n in weapon.shot_count:
-		
-			raycast.target_position.x = randf_range(-weapon.spread, weapon.spread)
-			raycast.target_position.y = randf_range(-weapon.spread, weapon.spread)
-			
-			raycast.force_raycast_update()
-			
-			if !raycast.is_colliding(): continue # Don't create impact when raycast didn't hit
-			
-			var collider = raycast.get_collider()
-			
-			# Hitting an enemy
-			
-			if collider.has_method("damage"):
-				collider.damage(weapon.damage)
-			
-			# Creating an impact animation
-			
-			var impact = preload("res://objects/impact.tscn")
-			var impact_instance = impact.instantiate()
-			
-			impact_instance.play("shot")
-			
-			get_tree().root.add_child(impact_instance)
-			
-			impact_instance.position = raycast.get_collision_point() + (raycast.get_collision_normal() / 10)
-			impact_instance.look_at(camera.global_transform.origin, Vector3.UP, true) 
+		#for n in weapon.shot_count:
+		#
+			#raycast.target_position.x = randf_range(-weapon.spread, weapon.spread)
+			#raycast.target_position.y = randf_range(-weapon.spread, weapon.spread)
+			#
+			#raycast.force_raycast_update()
+			#
+			#if !raycast.is_colliding(): continue # Don't create impact when raycast didn't hit
+			#
+			#var collider = raycast.get_collider()
+			#
+			## Hitting an enemy
+			#
+			#if collider.has_method("damage"):
+				#collider.damage(weapon.damage)
+			#
+			## Creating an impact animation
+			#
+			#var impact = preload("res://objects/impact.tscn")
+			#var impact_instance = impact.instantiate()
+			#
+			#impact_instance.play("shot")
+			#
+			#get_tree().root.add_child(impact_instance)
+			#
+			#impact_instance.position = raycast.get_collision_point() + (raycast.get_collision_normal() / 10)
+			#impact_instance.look_at(camera.global_transform.origin, Vector3.UP, true) 
 
 # Toggle between available weapons (listed in 'weapons')
 

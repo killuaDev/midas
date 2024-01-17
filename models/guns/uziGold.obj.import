@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c2ubc0wamws6o"
+path="res://.godot/imported/uziGold.obj-168857f5c695688f76466771b9d99fbd.mesh"
+
+[deps]
+
+files=["res://.godot/imported/uziGold.obj-168857f5c695688f76466771b9d99fbd.mesh"]
+
+source_file="res://models/guns/uziGold.obj"
+dest_files=["res://.godot/imported/uziGold.obj-168857f5c695688f76466771b9d99fbd.mesh", "res://.godot/imported/uziGold.obj-168857f5c695688f76466771b9d99fbd.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
