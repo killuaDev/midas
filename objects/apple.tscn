@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://c0s75mumsh7i"]
+[gd_scene load_steps=10 format=3 uid="uid://c0s75mumsh7i"]
 
 [ext_resource type="PackedScene" uid="uid://cn22yicduuuak" path="res://components/golder.tscn" id="1_6jdwv"]
+[ext_resource type="Script" path="res://objects/apple.gd" id="1_k0duh"]
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_4fxmi"]
 points = PackedVector3Array(-0.044451, 0.00315297, -0.00885666, 0.0951142, 0.100968, 0.00594128, 0.0946534, 0.0950315, 0.00591249, -0.00310462, 0.179141, 0.0965821, -0.0148726, 0.133703, -0.083285, -0.0948803, 0.106892, 0.00295398, -0.00298157, 0.032199, 0.0777937, 0.0537973, 0.0292722, -0.0537989, 0.0124522, 0.191621, -0.0124534, 0.0567682, 0.0322725, 0.0537928, 0.063168, 0.134149, -0.0631697, -0.0565523, 0.0354948, -0.0565518, -0.0680627, 0.0920859, 0.0680624, -0.0631694, 0.134148, -0.063169, 0.00295688, 0.0920758, -0.0950274, 0.0684697, 0.103958, 0.0684715, 0.085557, 0.136322, 0.00293884, -0.0342768, 0.179141, 0.0405028, 0.0444495, 0.00315163, 0.00885679, -0.0777904, 0.0321867, 0.00298111, 0.00294926, 0.00914285, -0.0533106, -0.0385248, 0.00909596, 0.0385241, 0.00295688, 0.0920758, 0.0950274, 0.0680614, 0.0920858, -0.0680631, 0.0777937, 0.0321975, -0.0029806, -0.0855645, 0.136316, 0.00293966, -0.0124543, 0.191621, -0.0124534, -0.0680627, 0.0920859, -0.0680624, -0.0631694, 0.134148, 0.063169, 0.0342747, 0.179141, 0.0405028, 0.00297946, 0.0321984, -0.0777944, 0.00889176, 0.00316194, 0.044446, -0.0565523, 0.0354948, 0.0565518, 0.063168, 0.134149, 0.0631697, 0.00293818, 0.13631, -0.0855716, 0.0356256, 0.00297088, -0.0296923, -0.0950266, 0.0920753, -0.00295853, 0.00310249, 0.179141, 0.0965821, -0.0296965, 0.00296029, -0.0356126, 0.0951142, 0.100968, -0.00594128, -0.00591221, 0.0950315, -0.0946535, -0.00591221, 0.0950315, 0.0946535, 0.0680614, 0.0920858, 0.0680631)
@@ -96,7 +97,15 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_uqf1w")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_qt7yf"]
+radius = 0.122512
+
 [node name="apple" type="RigidBody3D"]
+collision_layer = 2
+collision_mask = 9
+max_contacts_reported = 2
+contact_monitor = true
+script = ExtResource("1_k0duh")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("ConvexPolygonShape3D_4fxmi")
@@ -106,3 +115,10 @@ shape = SubResource("ConvexPolygonShape3D_4fxmi")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="golder"]
 mesh = SubResource("ArrayMesh_q2dmh")
 skeleton = NodePath("")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000853922, 0.0964266, -2.98023e-08)
+shape = SubResource("SphereShape3D_qt7yf")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]

@@ -1,5 +1,20 @@
 extends CanvasLayer
 
+@onready var ammo: Label = $Ammo
+@onready var health: Label = $Health
 
-func _on_health_updated(health):
-	$Health.text = str(health) + "%"
+func _on_health_updated(new_health: int):
+	health.text = str(new_health) + "%"
+
+
+
+func _on_ammo_updated(current_ammo: int):
+	ammo.text = "Ammo: " + str(current_ammo)
+
+
+func _on_weapon_dropped():
+	ammo.hide()
+
+
+func _on_weapon_picked_up():
+	ammo.show()

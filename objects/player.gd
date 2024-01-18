@@ -35,6 +35,9 @@ var container_offset = Vector3(1.2, -1.1, -2.75)
 var tween:Tween
 
 signal health_updated
+signal ammo_updated
+signal weapon_picked_up
+signal weapon_dropped
 
 @onready var camera = $Head/Camera
 @onready var raycast = $Head/Camera/RayCast
@@ -52,6 +55,7 @@ func _ready():
 	
 	weapon = weapons[weapon_index] # Weapon must never be nil
 	initiate_change_weapon(weapon_index)
+	print("Player2 collision layer: ", collision_layer)
 
 func _physics_process(delta):
 	
@@ -169,24 +173,30 @@ func handle_controls(_delta):
 	# TODO: there's probably a lot of tuning to do here to make the throws
 	# feel right, but I'll leave that for now5
 	if Input.is_action_just_pressed("throw"):
-		if held_object:
-			held_object.reparent(get_parent_node_3d())
-			held_object.global_position = camera.global_position
-			held_object.process_mode = Node.PROCESS_MODE_ALWAYS
-			held_object.collision_layer = 1
-			held_object.apply_central_impulse(-camera.global_transform.basis.z * 70)
-			held_object = null
+		item_throw() # I know it's inconsistent that the keypress isn't included in the function #TODO
+			
 
+func item_throw():
+	if held_object:
+		item_drop()
+		held_object.global_position = camera.global_position
+		held_object.apply_central_impulse(-camera.global_transform.basis.z * 70)
+		if held_object.has_method("throw"):
+			held_object.throw()
+		held_object = null
+
+func item_drop():
+	held_object.reparent(get_parent(), true)
+	
+	# start processing physics again
+	held_object.freeze = false
+	if held_object is Pistol:
+		weapon_dropped.emit()
 
 func item_pick_up():
 	if Input.is_action_just_pressed("pick_up"):
 		if held_object:
-			held_object.reparent(get_parent(), true)
-			
-			# start processing physics again
-			held_object.freeze = false
-			# This could cause issues in future if ever we have more than 1 collision layer going on
-			held_object.collision_layer = 1 
+			item_drop()
 			held_object = null
 		else:
 			# TODO: make this a better check of whether something can be picked up
@@ -195,17 +205,21 @@ func item_pick_up():
 				print("picking up ", held_object.name, held_object.get_class())
 				held_object.reparent(held_item_container, false)
 				held_object.position = Vector3()
+				held_object.rotation = Vector3()
 				
 				# Stop the held item from getting physics processing
 				held_object.freeze = true
-				
 				# Turn the item gold
 				# TODO: I have no idea what happens here if the held_item doesn't have a golder component
 				# I found out, it doesn't crash but it is unhappy, I think I can fix this later if I have some time and I can reorganise the structure a bit
 				var golder = held_object.get_node('golder')
 				if golder:
 					golder.turn_gold()
-
+				
+				if held_object is Pistol:
+					var pistol: Pistol = held_object
+					weapon_picked_up.emit()
+					ammo_updated.emit(pistol.current_ammo)
 # Handle gravity
 func handle_gravity(delta):
 	
@@ -228,14 +242,15 @@ func action_jump():
 # Shooting
 
 func action_shoot():
-	# TODO: could turn this into a class check for like a gun class?
 	if Input.is_action_pressed("shoot") and held_object is Pistol:
 		var pistol = held_object as Pistol
 		#TODO: this should be somewhere else, but it works for now
 		raycast.target_position = Vector3(0, 0, -1) * pistol.max_range
 		# TODO: currently unsure how much code should be here and how much code in the
 		# pistol.gd script, we'll adjust as needed
-		if pistol.current_ammo <= 0 or !pistol.timer.is_stopped():
+		if !pistol.timer.is_stopped():
+			return
+		if pistol.current_ammo <= 0:
 			# TODO: reload / out of ammo indication
 			#print("not shooting because of ammo or cooldown")
 			#print("Current ammo: ", pistol.current_ammo)
@@ -245,19 +260,13 @@ func action_shoot():
 			return
 		var collider = raycast.get_collider()
 		
-		## Hitting an enemy
+		# Hitting an enemy
 		if collider and collider.has_method("damage"):
 			collider.damage()
-		elif !collider:
-			print("shot and missed")
-		elif !collider.has_method("damage"):
-			print("hit something but not an enemy")
 			
 		pistol.current_ammo -= 1
-		print("shot one, current ammo is now: ", pistol.current_ammo)
+		ammo_updated.emit(pistol.current_ammo)
 		pistol.timer.start(pistol.cooldown)
-		print("pistol timer started")
-		print("time left: ", pistol.timer.time_left)
 		
 	#if Input.is_action_pressed("shoot"):
 	#
@@ -356,7 +365,7 @@ func change_weapon():
 		child.layers = 2
 		
 	# Set weapon data
-	
+
 	raycast.target_position = Vector3(0, 0, -1) * weapon.max_distance
 
 func damage(amount = health):
@@ -364,5 +373,5 @@ func damage(amount = health):
 	health -= amount
 	health_updated.emit(health) # Update health on HUD
 	
-	if health < 0:
+	if health <= 0:
 		get_tree().reload_current_scene() # Reset when out of health
