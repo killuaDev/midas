@@ -16,5 +16,6 @@ func _on_weapon_dropped():
 	ammo.hide()
 
 
-func _on_weapon_picked_up():
+func _on_weapon_picked_up(pistol: Pistol):
+	pistol.ammo_updated.connect(_on_ammo_updated)
 	ammo.show()

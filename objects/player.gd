@@ -8,7 +8,7 @@ extends CharacterBody3D
 @export var weapons: Array[Weapon] = []
 
 @export_subgroup("Items")
-@export var held_object: RigidBody3D
+@export var held_item: RigidBody3D
 var weapon: Weapon
 var weapon_index := 0
 
@@ -54,7 +54,7 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	
 	weapon = weapons[weapon_index] # Weapon must never be nil
-	initiate_change_weapon(weapon_index)
+	#initiate_change_weapon(weapon_index)
 	print("Player2 collision layer: ", collision_layer)
 
 func _physics_process(delta):
@@ -116,11 +116,9 @@ func _input(event):
 		
 		rotation_target.y -= event.relative.x / mouse_sensitivity
 		rotation_target.x -= event.relative.y / mouse_sensitivity
-  
+
 func handle_controls(_delta):
-	
 	# Mouse capture
-	
 	if Input.is_action_just_pressed("mouse_capture"):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		mouse_captured = true
@@ -132,24 +130,21 @@ func handle_controls(_delta):
 		input_mouse = Vector2.ZERO
 	
 	# Movement
-	
 	var input := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	
 	movement_velocity = Vector3(input.x, 0, input.y).normalized() * movement_speed
 	
 	# Rotation
-	
 	var rotation_input := Input.get_vector("camera_right", "camera_left", "camera_down", "camera_up")
 	
 	rotation_target -= Vector3(-rotation_input.y, -rotation_input.x, 0).limit_length(1.0) * gamepad_sensitivity
 	rotation_target.x = clamp(rotation_target.x, deg_to_rad(-90), deg_to_rad(90))
 	
 	# Shooting
-	
-	action_shoot()
+	if Input.is_action_pressed("shoot"):
+		action_shoot()
 	
 	# Jumping
-	
 	if Input.is_action_just_pressed("jump"):
 		
 		if jump_single or jump_double:
@@ -163,211 +158,189 @@ func handle_controls(_delta):
 		if(jump_single): action_jump()
 		
 	# Weapon switching
-	
-	action_weapon_toggle()
+	#action_weapon_toggle()
 	
 	# Picking up items
-	item_pick_up()
+	if Input.is_action_just_pressed("pick_up"):
+		if held_item:
+			item_drop()
+			held_item = null
+		else:
+			item_pick_up()
 	
 	# Basic throwing
 	# TODO: there's probably a lot of tuning to do here to make the throws
 	# feel right, but I'll leave that for now5
 	if Input.is_action_just_pressed("throw"):
-		item_throw() # I know it's inconsistent that the keypress isn't included in the function #TODO
-			
+		item_throw() # I know it's inconsistent that the keypress isn't included in the function #TODO	
 
 func item_throw():
-	if held_object:
+	if held_item:
 		item_drop()
-		held_object.global_position = camera.global_position
-		held_object.apply_central_impulse(-camera.global_transform.basis.z * 70)
-		if held_object.has_method("throw"):
-			held_object.throw()
-		held_object = null
+		held_item.global_position = camera.global_position
+		held_item.apply_central_impulse(-camera.global_transform.basis.z * 70)
+		if held_item.has_method("throw"):
+			held_item.throw()
+		held_item = null
 
 func item_drop():
-	held_object.reparent(get_parent(), true)
+	held_item.reparent(get_parent(), true)
 	
 	# start processing physics again
-	held_object.freeze = false
-	if held_object is Pistol:
+	held_item.freeze = false
+	if held_item is Pistol:
 		weapon_dropped.emit()
 
 func item_pick_up():
-	if Input.is_action_just_pressed("pick_up"):
-		if held_object:
-			item_drop()
-			held_object = null
-		else:
-			# TODO: make this a better check of whether something can be picked up
-			if raycast.get_collider() is RigidBody3D:
-				held_object = raycast.get_collider()
-				print("picking up ", held_object.name, held_object.get_class())
-				held_object.reparent(held_item_container, false)
-				held_object.position = Vector3()
-				held_object.rotation = Vector3()
-				
-				# Stop the held item from getting physics processing
-				held_object.freeze = true
-				# Turn the item gold
-				# TODO: I have no idea what happens here if the held_item doesn't have a golder component
-				# I found out, it doesn't crash but it is unhappy, I think I can fix this later if I have some time and I can reorganise the structure a bit
-				var golder = held_object.get_node('golder')
-				if golder:
-					golder.turn_gold()
-				
-				if held_object is Pistol:
-					var pistol: Pistol = held_object
-					weapon_picked_up.emit()
-					ammo_updated.emit(pistol.current_ammo)
+	# TODO: make this a better check of whether something can be picked up
+	if raycast.get_collider() is RigidBody3D:
+		held_item = raycast.get_collider()
+		print("picking up ", held_item.name, held_item.get_class())
+		held_item.reparent(held_item_container, false)
+		held_item.position = Vector3()
+		held_item.rotation = Vector3()
+		
+		# Stop the held item from getting physics processing
+		held_item.freeze = true
+		
+		# Turn the item gold
+		# TODO: I have no idea what happens here if the held_item doesn't have a golder component
+		# I found out, it doesn't crash but it is unhappy, I think I can fix this later if I have some time and I can reorganise the structure a bit
+		var golder = held_item.get_node('golder')
+		if golder:
+			golder.turn_gold()
+		
+		if held_item is Pistol:
+			var pistol: Pistol = held_item
+			weapon_picked_up.emit(pistol)
+			ammo_updated.emit(pistol.current_ammo)
+
 # Handle gravity
-func handle_gravity(delta):
-	
+func handle_gravity(delta):	
 	gravity += 20 * delta
 	
-	if gravity > 0 and is_on_floor():
-		
+	if gravity > 0 and is_on_floor():		
 		jump_single = true
 		gravity = 0
 
 # Jumping
-
 func action_jump():
-	
 	gravity = -jump_strength
 	
 	jump_single = false;
 	jump_double = true;
 
 # Shooting
-
 func action_shoot():
-	if Input.is_action_pressed("shoot") and held_object is Pistol:
-		var pistol = held_object as Pistol
-		#TODO: this should be somewhere else, but it works for now
-		raycast.target_position = Vector3(0, 0, -1) * pistol.max_range
-		# TODO: currently unsure how much code should be here and how much code in the
-		# pistol.gd script, we'll adjust as needed
-		if !pistol.timer.is_stopped():
-			return
-		if pistol.current_ammo <= 0:
-			# TODO: reload / out of ammo indication
-			#print("not shooting because of ammo or cooldown")
-			#print("Current ammo: ", pistol.current_ammo)
-			#print("Is stopped: ", pistol.timer.is_stopped())
-			#print("Time left: ", pistol.timer.time_left)
-			#print("is paused: ", pistol.timer.is_paused())
-			return
-		var collider = raycast.get_collider()
-		
-		# Hitting an enemy
-		if collider and collider.has_method("damage"):
-			collider.damage()
-			
-		pistol.current_ammo -= 1
-		ammo_updated.emit(pistol.current_ammo)
-		pistol.timer.start(pistol.cooldown)
-		
-	#if Input.is_action_pressed("shoot"):
+	if not held_item is Pistol:
+		return
+	
+	var pistol = held_item as Pistol
+	#TODO: this should be somewhere else, but it works for now
+	raycast.target_position = Vector3(0, 0, -1) * pistol.max_range
+	var collider: Object = raycast.get_collider()
+	pistol.shoot(collider)
+	# TODO: currently unsure how much code should be here and how much code in the
+	# pistol.gd script, we'll adjust as needed	
+	
+#if Input.is_action_pressed("shoot"):
+#
+	#if !blaster_cooldown.is_stopped(): return # Cooldown for shooting
 	#
-		#if !blaster_cooldown.is_stopped(): return # Cooldown for shooting
+	#Audio.play(weapon.sound_shoot)
+	#
+	#container.position.z += 0.25 # Knockback of weapon visual
+	#camera.rotation.x += 0.025 # Knockback of camera
+	#movement_velocity += Vector3(0, 0, weapon.knockback) # Knockback
+	#
+	## Set muzzle flash position, play animation
+	#
+	#muzzle.play("default")
+	#
+	#muzzle.rotation_degrees.z = randf_range(-45, 45)
+	#muzzle.scale = Vector3.ONE * randf_range(0.40, 0.75)
+	#muzzle.position = container.position - weapon.muzzle_position
+	#
+	#blaster_cooldown.start(weapon.cooldown)
+	
+	# Shoot the weapon, amount based on shot count
+	
+	#for n in weapon.shot_count:
+	#
+		#raycast.target_position.x = randf_range(-weapon.spread, weapon.spread)
+		#raycast.target_position.y = randf_range(-weapon.spread, weapon.spread)
 		#
-		#Audio.play(weapon.sound_shoot)
+		#raycast.force_raycast_update()
 		#
-		#container.position.z += 0.25 # Knockback of weapon visual
-		#camera.rotation.x += 0.025 # Knockback of camera
-		#movement_velocity += Vector3(0, 0, weapon.knockback) # Knockback
+		#if !raycast.is_colliding(): continue # Don't create impact when raycast didn't hit
 		#
-		## Set muzzle flash position, play animation
+		#var collider = raycast.get_collider()
 		#
-		#muzzle.play("default")
+		## Hitting an enemy
 		#
-		#muzzle.rotation_degrees.z = randf_range(-45, 45)
-		#muzzle.scale = Vector3.ONE * randf_range(0.40, 0.75)
-		#muzzle.position = container.position - weapon.muzzle_position
+		#if collider.has_method("damage"):
+			#collider.damage(weapon.damage)
 		#
-		#blaster_cooldown.start(weapon.cooldown)
-		
-		# Shoot the weapon, amount based on shot count
-		
-		#for n in weapon.shot_count:
+		## Creating an impact animation
 		#
-			#raycast.target_position.x = randf_range(-weapon.spread, weapon.spread)
-			#raycast.target_position.y = randf_range(-weapon.spread, weapon.spread)
-			#
-			#raycast.force_raycast_update()
-			#
-			#if !raycast.is_colliding(): continue # Don't create impact when raycast didn't hit
-			#
-			#var collider = raycast.get_collider()
-			#
-			## Hitting an enemy
-			#
-			#if collider.has_method("damage"):
-				#collider.damage(weapon.damage)
-			#
-			## Creating an impact animation
-			#
-			#var impact = preload("res://objects/impact.tscn")
-			#var impact_instance = impact.instantiate()
-			#
-			#impact_instance.play("shot")
-			#
-			#get_tree().root.add_child(impact_instance)
-			#
-			#impact_instance.position = raycast.get_collision_point() + (raycast.get_collision_normal() / 10)
-			#impact_instance.look_at(camera.global_transform.origin, Vector3.UP, true) 
+		#var impact = preload("res://objects/impact.tscn")
+		#var impact_instance = impact.instantiate()
+		#
+		#impact_instance.play("shot")
+		#
+		#get_tree().root.add_child(impact_instance)
+		#
+		#impact_instance.position = raycast.get_collision_point() + (raycast.get_collision_normal() / 10)
+		#impact_instance.look_at(camera.global_transform.origin, Vector3.UP, true) 
 
-# Toggle between available weapons (listed in 'weapons')
+## Toggle between available weapons (listed in 'weapons')
+#func action_weapon_toggle():
+	#
+	#if Input.is_action_just_pressed("weapon_toggle"):
+		#
+		#weapon_index = wrap(weapon_index + 1, 0, weapons.size())
+		#initiate_change_weapon(weapon_index)
+		#
+		#Audio.play("sounds/weapon_change.ogg")
+#
+## Initiates the weapon changing animation (tween)
+#func initiate_change_weapon(index):
+	#
+	#weapon_index = index
+	#
+	#tween = get_tree().create_tween()
+	#tween.set_ease(Tween.EASE_OUT_IN)
+	#tween.tween_property(container, "position", container_offset - Vector3(0, 1, 0), 0.1)
+	#tween.tween_callback(change_weapon) # Changes the model
+#
+## Switches the weapon model (off-screen)
+#func change_weapon():
+	#
+	#weapon = weapons[weapon_index]
+#
+	## Step 1. Remove previous weapon model(s) from container
+	#
+	#for n in container.get_children():
+		#container.remove_child(n)
+	#
+	## Step 2. Place new weapon model in container
+	#
+	#var weapon_model = weapon.model.instantiate()
+	#container.add_child(weapon_model)
+	#
+	#weapon_model.position = weapon.position
+	#weapon_model.rotation_degrees = weapon.rotation
+	#
+	## Step 3. Set model to only render on layer 2 (the weapon camera)
+	#
+	#for child in weapon_model.find_children("*", "MeshInstance3D"):
+		#child.layers = 2
+		#
+	## Set weapon data
+#
+	#raycast.target_position = Vector3(0, 0, -1) * weapon.max_distance
 
-func action_weapon_toggle():
-	
-	if Input.is_action_just_pressed("weapon_toggle"):
-		
-		weapon_index = wrap(weapon_index + 1, 0, weapons.size())
-		initiate_change_weapon(weapon_index)
-		
-		Audio.play("sounds/weapon_change.ogg")
-
-# Initiates the weapon changing animation (tween)
-
-func initiate_change_weapon(index):
-	
-	weapon_index = index
-	
-	tween = get_tree().create_tween()
-	tween.set_ease(Tween.EASE_OUT_IN)
-	tween.tween_property(container, "position", container_offset - Vector3(0, 1, 0), 0.1)
-	tween.tween_callback(change_weapon) # Changes the model
-
-# Switches the weapon model (off-screen)
-
-func change_weapon():
-	
-	weapon = weapons[weapon_index]
-
-	# Step 1. Remove previous weapon model(s) from container
-	
-	for n in container.get_children():
-		container.remove_child(n)
-	
-	# Step 2. Place new weapon model in container
-	
-	var weapon_model = weapon.model.instantiate()
-	container.add_child(weapon_model)
-	
-	weapon_model.position = weapon.position
-	weapon_model.rotation_degrees = weapon.rotation
-	
-	# Step 3. Set model to only render on layer 2 (the weapon camera)
-	
-	for child in weapon_model.find_children("*", "MeshInstance3D"):
-		child.layers = 2
-		
-	# Set weapon data
-
-	raycast.target_position = Vector3(0, 0, -1) * weapon.max_distance
-
+# Take damage
 func damage(amount = health):
 	
 	health -= amount
