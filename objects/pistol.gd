@@ -1,8 +1,9 @@
 extends RigidBody3D
 class_name Pistol
 # No reload capabilites at the moment
-@export var current_ammo = 6
-
+@export var current_ammo := 6
+@export var cooldown := 0.1
+@export var max_range := 50
 @onready var timer: Timer = $Timer
 
 # Called when the node enters the scene tree for the first time.

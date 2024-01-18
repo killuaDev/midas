@@ -24,8 +24,8 @@ outline_color = Color(0, 0, 0, 0.470588)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("1_q8fpv")
 
-[node name="Player" parent="." node_paths=PackedStringArray("crosshair") instance=ExtResource("2_elriq")]
-crosshair = NodePath("../HUD/Crosshair")
+[node name="Player2" parent="." instance=ExtResource("2_elriq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.422618, -0.694272, 0.582563, 0, 0.642788, 0.766044, -0.906308, 0.323744, -0.271654, 0, 0, 0)
@@ -65,19 +65,19 @@ vertical_alignment = 2
 
 [node name="enemy-flying" parent="Enemies" node_paths=PackedStringArray("player") instance=ExtResource("8_7ty2f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 2.5, -6)
-player = NodePath("../../Player")
+player = NodePath("../../Player2")
 
 [node name="enemy-flying2" parent="Enemies" node_paths=PackedStringArray("player") instance=ExtResource("8_7ty2f")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9.5, 2.5, 1.5)
-player = NodePath("../../Player")
+player = NodePath("../../Player2")
 
 [node name="enemy-flying3" parent="Enemies" node_paths=PackedStringArray("player") instance=ExtResource("8_7ty2f")]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 5.5, 3.5, 9)
-player = NodePath("../../Player")
+player = NodePath("../../Player2")
 
 [node name="enemy-flying4" parent="Enemies" node_paths=PackedStringArray("player") instance=ExtResource("8_7ty2f")]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 15.5, 4, -7.5)
-player = NodePath("../../Player")
+player = NodePath("../../Player2")
 
 [node name="Level" type="Node" parent="."]
 
@@ -131,4 +131,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.443587, 0.585802, 0.956913
 [node name="pistol" parent="." instance=ExtResource("12_2pave")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.19209e-07, 3.81316, 1.22624)
 
-[connection signal="health_updated" from="Player" to="HUD" method="_on_health_updated"]
+[connection signal="health_updated" from="Player2" to="HUD" method="_on_health_updated"]

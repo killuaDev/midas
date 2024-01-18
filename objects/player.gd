@@ -44,8 +44,6 @@ signal health_updated
 @onready var blaster_cooldown = $Cooldown
 @onready var held_item_container = $Head/Camera/held_item_container
 
-@export var crosshair:TextureRect
-
 # Functions
 
 func _ready():
@@ -106,14 +104,7 @@ func _physics_process(delta):
 	if position.y < -10:
 		get_tree().reload_current_scene()
 
-	# TODO: make held object move around with player?
-	# it currently has a rigidbody, do I need to disable that so that it doesn't falll down?
-	if held_object:
-		
-		#held_object.position = position
-		pass
 # Mouse movement
-
 func _input(event):
 	if event is InputEventMouseMotion and mouse_captured:
 		
@@ -186,11 +177,14 @@ func handle_controls(_delta):
 			held_object.apply_central_impulse(-camera.global_transform.basis.z * 70)
 			held_object = null
 
+
 func item_pick_up():
 	if Input.is_action_just_pressed("pick_up"):
 		if held_object:
 			held_object.reparent(get_parent(), true)
-			held_object.process_mode = Node.PROCESS_MODE_ALWAYS
+			
+			# start processing physics again
+			held_object.freeze = false
 			# This could cause issues in future if ever we have more than 1 collision layer going on
 			held_object.collision_layer = 1 
 			held_object = null
@@ -203,15 +197,16 @@ func item_pick_up():
 				held_object.position = Vector3()
 				
 				# Stop the held item from getting physics processing
-				held_object.process_mode = Node.PROCESS_MODE_DISABLED
+				held_object.freeze = true
 				
 				# Turn the item gold
 				# TODO: I have no idea what happens here if the held_item doesn't have a golder component
+				# I found out, it doesn't crash but it is unhappy, I think I can fix this later if I have some time and I can reorganise the structure a bit
 				var golder = held_object.get_node('golder')
 				if golder:
 					golder.turn_gold()
-# Handle gravity
 
+# Handle gravity
 func handle_gravity(delta):
 	
 	gravity += 20 * delta
@@ -236,20 +231,33 @@ func action_shoot():
 	# TODO: could turn this into a class check for like a gun class?
 	if Input.is_action_pressed("shoot") and held_object is Pistol:
 		var pistol = held_object as Pistol
+		#TODO: this should be somewhere else, but it works for now
+		raycast.target_position = Vector3(0, 0, -1) * pistol.max_range
 		# TODO: currently unsure how much code should be here and how much code in the
 		# pistol.gd script, we'll adjust as needed
-		if pistol.current_ammo <= 0 or pistol.timer.time_left > 0:
+		if pistol.current_ammo <= 0 or !pistol.timer.is_stopped():
 			# TODO: reload / out of ammo indication
-			print("not shooting because of ammo or cooldown")
+			#print("not shooting because of ammo or cooldown")
+			#print("Current ammo: ", pistol.current_ammo)
+			#print("Is stopped: ", pistol.timer.is_stopped())
+			#print("Time left: ", pistol.timer.time_left)
+			#print("is paused: ", pistol.timer.is_paused())
 			return
 		var collider = raycast.get_collider()
 		
 		## Hitting an enemy
 		if collider and collider.has_method("damage"):
-			collider.damage(weapon.damage)
+			collider.damage()
+		elif !collider:
+			print("shot and missed")
+		elif !collider.has_method("damage"):
+			print("hit something but not an enemy")
 			
 		pistol.current_ammo -= 1
-		pistol.timer.start()
+		print("shot one, current ammo is now: ", pistol.current_ammo)
+		pistol.timer.start(pistol.cooldown)
+		print("pistol timer started")
+		print("time left: ", pistol.timer.time_left)
 		
 	#if Input.is_action_pressed("shoot"):
 	#
@@ -350,9 +358,8 @@ func change_weapon():
 	# Set weapon data
 	
 	raycast.target_position = Vector3(0, 0, -1) * weapon.max_distance
-	crosshair.texture = weapon.crosshair
 
-func damage(amount):
+func damage(amount = health):
 	
 	health -= amount
 	health_updated.emit(health) # Update health on HUD
