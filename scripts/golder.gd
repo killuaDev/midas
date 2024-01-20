@@ -2,7 +2,7 @@
 # of the node which has a child mesh
 # currently it turns things gold based on a keybind, but I'll probably make it
 # signal based soon
-extends Node
+extends Node3D
 class_name Golder
 @export var gold_texture: Resource
 @onready var meshes: Array[Node]

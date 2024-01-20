@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://hbl46k3wkcwq"]
+
+[ext_resource type="Script" path="res://scripts/item_body.gd" id="1_6pywk"]
+
+[node name="ItemBody" type="RigidBody3D"]
+script = ExtResource("1_6pywk")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

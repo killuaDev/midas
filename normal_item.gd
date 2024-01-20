@@ -1,13 +1,15 @@
 extends RigidBody3D
+class_name NormalItem
 
 var is_gold := false
 var is_being_thrown := false
 
-@onready var golder: Golder = $golder
+
  
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	print("Apple Collision Layer: ", collision_layer)
+	print("Apple collision mask: ", collision_mask)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

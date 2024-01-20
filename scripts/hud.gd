@@ -12,7 +12,8 @@ func _on_ammo_updated(current_ammo: int):
 	ammo.text = "Ammo: " + str(current_ammo)
 
 
-func _on_weapon_dropped():
+func _on_weapon_dropped(pistol: Pistol):
+	pistol.ammo_updated.disconnect(_on_ammo_updated)
 	ammo.hide()
 
 

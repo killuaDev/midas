@@ -1,11 +1,16 @@
+@icon("res://icons/riposte.svg") # Idk why this isn't working
+
 extends RigidBody3D
 class_name Pistol
+
 # No reload capabilites at the moment
 @export var current_ammo := 6
-@export var cooldown := 0.1
+@export var cooldown := 0.5
 @export var max_range := 50
 @onready var timer: Timer = $Timer
+
 signal ammo_updated
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -26,7 +31,6 @@ func shoot(target: Object):
 		#print("Time left: ", pistol.timer.time_left)
 		#print("is paused: ", pistol.timer.is_paused())
 		return
-	
 	
 	# Hitting an enemy
 	if target and target.has_method("damage"):

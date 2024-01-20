@@ -141,7 +141,8 @@ func handle_controls(_delta):
 	rotation_target.x = clamp(rotation_target.x, deg_to_rad(-90), deg_to_rad(90))
 	
 	# Shooting
-	if Input.is_action_pressed("shoot"):
+	# just_pressed means semi-auto I think
+	if Input.is_action_just_pressed("shoot"):
 		action_shoot()
 	
 	# Jumping
@@ -189,7 +190,7 @@ func item_drop():
 	# start processing physics again
 	held_item.freeze = false
 	if held_item is Pistol:
-		weapon_dropped.emit()
+		weapon_dropped.emit(held_item)
 
 func item_pick_up():
 	# TODO: make this a better check of whether something can be picked up
@@ -206,9 +207,8 @@ func item_pick_up():
 		# Turn the item gold
 		# TODO: I have no idea what happens here if the held_item doesn't have a golder component
 		# I found out, it doesn't crash but it is unhappy, I think I can fix this later if I have some time and I can reorganise the structure a bit
-		var golder = held_item.get_node('golder')
-		if golder:
-			golder.turn_gold()
+		if held_item is ItemBody:
+			held_item.turn_gold()
 		
 		if held_item is Pistol:
 			var pistol: Pistol = held_item
