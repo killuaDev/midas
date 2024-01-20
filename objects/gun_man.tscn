@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://cyoqpinx3d1rh"]
+
+[ext_resource type="PackedScene" uid="uid://bbf8k6lf4kwmp" path="res://objects/pistol.tscn" id="1_igx0c"]
+[ext_resource type="Script" path="res://objects/gun_man.gd" id="1_uv76p"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ii6a4"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_llhhb"]
+
+[node name="GunMan" type="StaticBody3D" node_paths=PackedStringArray("held_item")]
+collision_layer = 8
+collision_mask = 15
+script = ExtResource("1_uv76p")
+held_item = NodePath("held_item_container/pistol")
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, -5)
+collision_mask = 15
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_ii6a4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_llhhb")
+
+[node name="held_item_container" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.408233, 0.0548788, -0.460186)
+
+[node name="pistol" parent="held_item_container" instance=ExtResource("1_igx0c")]
