@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dxvvlck8lej3f"]
+[gd_scene load_steps=17 format=3 uid="uid://dxvvlck8lej3f"]
 
 [ext_resource type="Environment" uid="uid://jvmpkdwaeaq" path="res://scenes/main-environment.tres" id="1_q8fpv"]
 [ext_resource type="PackedScene" uid="uid://dl2ed4gkybggf" path="res://objects/player.tscn" id="2_elriq"]
@@ -14,7 +14,6 @@
 [ext_resource type="PackedScene" uid="uid://b4brarg7c68r" path="res://objects/broccoli.tscn" id="13_1tll7"]
 [ext_resource type="PackedScene" uid="uid://chwv82a15kfdt" path="res://objects/chair.tscn" id="14_36y44"]
 [ext_resource type="PackedScene" uid="uid://cyoqpinx3d1rh" path="res://objects/gun_man.tscn" id="15_5fp57"]
-[ext_resource type="PackedScene" uid="uid://4kp86l61oukw" path="res://objects/test_mover.tscn" id="16_yhqud"]
 [ext_resource type="PackedScene" uid="uid://kiyswduaacf1" path="res://objects/wine_glass.tscn" id="17_2trf3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_fpmwk"]
@@ -156,10 +155,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0989902, 0.496962, 0)
 
 [node name="GunMan" parent="." node_paths=PackedStringArray("player") instance=ExtResource("15_5fp57")]
 transform = Transform3D(-0.995703, -0.0696264, -0.0610486, -0.0697565, 0.997564, 0, 0.0608999, 0.00425853, -0.998135, -7.71371, -6.15334, -6.57299)
-player = NodePath("../Player2")
-
-[node name="test_mover" parent="." node_paths=PackedStringArray("player") instance=ExtResource("16_yhqud")]
-transform = Transform3D(-0.995703, -0.0696264, -0.0610486, -0.0697565, 0.997564, 0, 0.0608999, 0.00425853, -0.998135, -4.71371, -5.15334, -6.57299)
 player = NodePath("../Player2")
 
 [connection signal="ammo_updated" from="Player2" to="HUD" method="_on_ammo_updated"]
