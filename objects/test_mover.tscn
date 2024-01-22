@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://4kp86l61oukw"]
+
+[ext_resource type="Script" path="res://objects/test_mover.gd" id="1_sv7ji"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_sfyg6"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rk0sx"]
+
+[node name="test_mover" type="CharacterBody3D"]
+script = ExtResource("1_sv7ji")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_sfyg6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_rk0sx")
