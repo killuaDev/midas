@@ -6,6 +6,7 @@ class_name Pistol
 # No reload capabilites at the moment
 @export var current_ammo := 6
 @export var cooldown := 0.5
+@export var damage_amount := 5
 @export var max_range := 50
 @onready var timer: Timer = $Timer
 
@@ -34,7 +35,7 @@ func shoot(target: Object):
 	
 	# Hitting an enemy
 	if target and target.has_method("damage"):
-		target.damage()
+		target.damage(damage_amount)
 		
 	current_ammo -= 1
 	ammo_updated.emit(current_ammo)
