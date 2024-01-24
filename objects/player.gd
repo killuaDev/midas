@@ -221,11 +221,18 @@ func item_pick_up():
 		var character_body: CharacterBody3D = raycast.get_collider() as CharacterBody3D
 		if character_body.has_method("turn_gold"):
 			character_body.turn_gold()
+		character_body.drop_item()
 		var rigid_body = RigidBody3D.new()
 		held_item_container.add_child(rigid_body)
 		for child in character_body.get_children():
-			child.reparent(rigid_body)
+			child.reparent(rigid_body, false)
+		rigid_body.collision_layer = 0b10 # Collision layer 2 = objects
+		rigid_body.collision_mask = 0b1001 # Environments and enemies 
 		held_item = rigid_body
+		held_item.position = Vector3()
+		held_item.rotation = Vector3()
+		held_item.freeze = true
+		character_body.queue_free()
 		
 # Handle gravity
 func handle_gravity(delta):	

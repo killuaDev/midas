@@ -63,7 +63,19 @@ func damage(amount = health):
 	health -= amount
 	
 	if health <= 0:
-		queue_free()
+		destroy()
+
+func drop_item():
+	if !held_item:
+		return
+		
+	held_item.reparent(get_parent_node_3d())
+	held_item.freeze = false
+	held_item = null
+
+func destroy():
+	drop_item()
+	queue_free()
 
 func turn_gold():
 	is_golden = true
