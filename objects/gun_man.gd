@@ -4,7 +4,7 @@ extends CharacterBody3D
 @export var held_item: Pistol
 @export var effective_range := 10
 @export var health := 5
-
+var is_golden := false
 @export var player: Player:
 	set(new_player):
 		player = new_player
@@ -12,6 +12,7 @@ extends CharacterBody3D
 
 @onready var raycast = $RayCast3D
 @onready var aggro_timer = $AggroTimer
+@onready var golder: Golder = $golder
 
 func _get_configuration_warnings():
 	var warnings: Array[String] = []
@@ -35,8 +36,9 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	if !Engine.is_editor_hint():
-		held_item.freeze = true
-		print("Current state: ", str(state))
+		if is_golden:
+			return
+		#TODO: the state machine can be refactored with a class now I'd say
 		match state:
 			State.OutOfRange:
 				look_at(player.camera.global_position)
@@ -46,6 +48,7 @@ func _physics_process(delta):
 				velocity = Vector3.ZERO
 			State.Shooting:
 				velocity = Vector3.ZERO
+				look_at(player.camera.global_position)
 				held_item.shoot(raycast.get_collider())
 		move_and_slide()
 		
@@ -62,10 +65,10 @@ func damage(amount = health):
 	if health <= 0:
 		queue_free()
 
-#TODO: state machine
-# - if not in range of player it'll go towards the player
-# - if in range it'll shoot
-
+func turn_gold():
+	is_golden = true
+	golder.turn_gold()
+	
 
 func _on_aggro_timer_timeout():
 	state = State.Shooting

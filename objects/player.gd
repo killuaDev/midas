@@ -9,7 +9,7 @@ class_name Player
 @export var weapons: Array[Weapon] = []
 
 @export_subgroup("Items")
-@export var held_item: RigidBody3D
+@export var held_item: PhysicsBody3D
 var weapon: Weapon
 var weapon_index := 0
 
@@ -193,6 +193,8 @@ func item_drop():
 	if held_item is Pistol:
 		weapon_dropped.emit(held_item)
 
+#TODO: refactor more of this to be in the code of the item being picked up?
+#TODO: make this work properly with character bodies (enemies)
 func item_pick_up():
 	# TODO: make this a better check of whether something can be picked up
 	if raycast.get_collider() is RigidBody3D:
@@ -215,7 +217,14 @@ func item_pick_up():
 			var pistol: Pistol = held_item
 			weapon_picked_up.emit(pistol)
 			ammo_updated.emit(pistol.current_ammo)
-
+	elif raycast.get_collider() is CharacterBody3D:
+		held_item = raycast.get_collider()
+		print("picking up ", held_item.name, held_item.get_class())
+		held_item.reparent(held_item_container, false)
+		held_item.position = Vector3()
+		held_item.rotation = Vector3()
+		if held_item.has_method("turn_gold"):
+			held_item.turn_gold()
 # Handle gravity
 func handle_gravity(delta):	
 	gravity += 20 * delta

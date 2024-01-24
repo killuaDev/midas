@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cyoqpinx3d1rh"]
+[gd_scene load_steps=6 format=3 uid="uid://cyoqpinx3d1rh"]
 
 [ext_resource type="PackedScene" uid="uid://bbf8k6lf4kwmp" path="res://objects/pistol.tscn" id="1_igx0c"]
 [ext_resource type="Script" path="res://objects/gun_man.gd" id="1_uv76p"]
+[ext_resource type="PackedScene" uid="uid://cn22yicduuuak" path="res://components/golder.tscn" id="3_rso2h"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ii6a4"]
 
@@ -21,9 +22,6 @@ collision_mask = 15
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_ii6a4")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_llhhb")
-
 [node name="held_item_container" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.408233, 0.0548788, -0.460186)
 
@@ -33,5 +31,11 @@ freeze = true
 [node name="AggroTimer" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
+
+[node name="golder" parent="." instance=ExtResource("3_rso2h")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="golder"]
+mesh = SubResource("CapsuleMesh_llhhb")
+skeleton = NodePath("../..")
 
 [connection signal="timeout" from="AggroTimer" to="." method="_on_aggro_timer_timeout"]
