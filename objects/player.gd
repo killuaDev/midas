@@ -218,13 +218,15 @@ func item_pick_up():
 			weapon_picked_up.emit(pistol)
 			ammo_updated.emit(pistol.current_ammo)
 	elif raycast.get_collider() is CharacterBody3D:
-		held_item = raycast.get_collider()
-		print("picking up ", held_item.name, held_item.get_class())
-		held_item.reparent(held_item_container, false)
-		held_item.position = Vector3()
-		held_item.rotation = Vector3()
-		if held_item.has_method("turn_gold"):
-			held_item.turn_gold()
+		var character_body: CharacterBody3D = raycast.get_collider() as CharacterBody3D
+		if character_body.has_method("turn_gold"):
+			character_body.turn_gold()
+		var rigid_body = RigidBody3D.new()
+		held_item_container.add_child(rigid_body)
+		for child in character_body.get_children():
+			child.reparent(rigid_body)
+		held_item = rigid_body
+		
 # Handle gravity
 func handle_gravity(delta):	
 	gravity += 20 * delta
