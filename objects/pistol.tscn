@@ -10,6 +10,7 @@ size = Vector3(0.282959, 0.407288, 0.479858)
 collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_7377t")
+damage_amount = 10
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-10, 0, -8.74228e-07, 0, 10, 0, 8.74228e-07, 0, -10, 0, 0, 0)

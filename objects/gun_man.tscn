@@ -27,6 +27,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.408233, 0.0548788, -0.46018
 
 [node name="pistol" parent="held_item_container" instance=ExtResource("1_igx0c")]
 freeze = true
+current_ammo = 12
 
 [node name="AggroTimer" type="Timer" parent="."]
 wait_time = 2.0
