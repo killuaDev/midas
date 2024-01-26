@@ -1,5 +1,6 @@
-[gd_scene load_steps=13 format=3 uid="uid://dcpd4n5gtywhy"]
+[gd_scene load_steps=18 format=3 uid="uid://dcpd4n5gtywhy"]
 
+[ext_resource type="Script" path="res://scenes/lab_escape.gd" id="1_o5nlx"]
 [ext_resource type="Environment" uid="uid://jvmpkdwaeaq" path="res://scenes/main-environment.tres" id="1_xtwyk"]
 [ext_resource type="PackedScene" uid="uid://dl2ed4gkybggf" path="res://objects/player.tscn" id="2_gw6si"]
 [ext_resource type="PackedScene" uid="uid://cyoqpinx3d1rh" path="res://objects/gun_man.tscn" id="3_30jp6"]
@@ -7,12 +8,19 @@
 [ext_resource type="FontFile" uid="uid://biqtga8moh7ah" path="res://fonts/lilita_one_regular.ttf" id="5_a4wkq"]
 [ext_resource type="PackedScene" uid="uid://dsrm85n6tnb0l" path="res://objects/item_body.tscn" id="6_he252"]
 [ext_resource type="PackedScene" uid="uid://cn22yicduuuak" path="res://components/golder.tscn" id="7_e2bpi"]
+[ext_resource type="PackedScene" uid="uid://c0s75mumsh7i" path="res://objects/apple.tscn" id="8_fn7jj"]
+[ext_resource type="PackedScene" uid="uid://kiyswduaacf1" path="res://objects/wine_glass.tscn" id="9_8xw58"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_o54gq"]
 font = ExtResource("5_a4wkq")
 font_size = 36
 outline_size = 12
 outline_color = Color(0, 0, 0, 0.470588)
+
+[sub_resource type="LabelSettings" id="LabelSettings_h3osn"]
+font_size = 100
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vssj0"]
 resource_name = "wood"
@@ -54,12 +62,17 @@ shadow_mesh = SubResource("ArrayMesh_8j164")
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_tcu45"]
 points = PackedVector3Array(0, 0, -0.447373, 0, 0, 0, 0, 0.326734, -0.447373, 0.841488, 0, -0.447373, 0, 0.326734, 0, 0.841488, 0, 0, 0.841488, 0.326734, -0.447373, 0.841488, 0.326734, 0)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_pb5ah"]
+size = Vector3(3.01184, 2.5, 2.12805)
+
 [node name="lab_escape" type="Node3D"]
+script = ExtResource("1_o5nlx")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("1_xtwyk")
 
 [node name="Player2" parent="." instance=ExtResource("2_gw6si")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.73378, 0.5, 1.04077)
 collision_mask = 9
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
@@ -115,8 +128,23 @@ operation = 2
 flip_faces = true
 size = Vector3(2, 2.5, 1)
 
+[node name="CSGBox3D3" type="CSGBox3D" parent="Map Geometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -13)
+flip_faces = true
+size = Vector3(1, 2.5, 3)
+
 [node name="GunMan" parent="." node_paths=PackedStringArray("player") instance=ExtResource("3_30jp6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2, -3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.05345, 2, -6.86275)
+player = NodePath("../Player2")
+
+[node name="GunMan2" parent="." node_paths=PackedStringArray("held_item", "player") instance=ExtResource("3_30jp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0675, 1.98633, -10.3271)
+held_item = NodePath("../GunMan/held_item_container/pistol")
+player = NodePath("../Player2")
+
+[node name="GunMan3" parent="." node_paths=PackedStringArray("held_item", "player") instance=ExtResource("3_30jp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.90588, 2, -10.2784)
+held_item = NodePath("../GunMan/held_item_container/pistol")
 player = NodePath("../Player2")
 
 [node name="HUD" type="CanvasLayer" parent="."]
@@ -158,10 +186,26 @@ size_flags_vertical = 8
 label_settings = SubResource("LabelSettings_o54gq")
 vertical_alignment = 2
 
+[node name="WinScreen" type="Control" parent="HUD"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="HUD/WinScreen"]
+layout_mode = 0
+offset_left = 467.0
+offset_top = 144.0
+offset_right = 926.0
+offset_bottom = 327.0
+text = "You Won!"
+label_settings = SubResource("LabelSettings_h3osn")
+
 [node name="table" type="Node3D" parent="."]
 
 [node name="ItemBody" parent="." node_paths=PackedStringArray("golder") instance=ExtResource("6_he252")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.80297, -6.06865)
 golder = NodePath("golder")
 
 [node name="golder" parent="ItemBody" instance=ExtResource("7_e2bpi")]
@@ -175,7 +219,25 @@ skeleton = NodePath("")
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 shape = SubResource("ConvexPolygonShape3D_tcu45")
 
+[node name="apple" parent="." instance=ExtResource("8_fn7jj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.31604, 1.98633, -5.80566)
+
+[node name="wine_glass" parent="apple" instance=ExtResource("9_8xw58")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.276123, 0, -0.265381)
+
+[node name="WinZone" type="Area3D" parent="."]
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WinZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.810974, 2.5, -15.6236)
+shape = SubResource("BoxShape3D_pb5ah")
+
+[node name="GunMan4" parent="." node_paths=PackedStringArray("player") instance=ExtResource("3_30jp6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.48223, 1.98633, -12.0895)
+player = NodePath("../Player2")
+
 [connection signal="ammo_updated" from="Player2" to="HUD" method="_on_ammo_updated"]
 [connection signal="health_updated" from="Player2" to="HUD" method="_on_health_updated"]
 [connection signal="weapon_dropped" from="Player2" to="HUD" method="_on_weapon_dropped"]
 [connection signal="weapon_picked_up" from="Player2" to="HUD" method="_on_weapon_picked_up"]
+[connection signal="body_entered" from="WinZone" to="." method="_on_win_zone_body_entered"]

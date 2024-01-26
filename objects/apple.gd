@@ -19,17 +19,13 @@ func turn_gold():
 	
 func throw():
 	is_being_thrown = true
-	print('being thrown')
-	print('collision mask when being thrown: ', collision_mask)
 
 func _on_body_entered(body):
-	print("entered body_shape: ", body.name)
-	print("layer of that body: ", body.collision_layer)
-	print("apple's mask: ", collision_mask)
+
 	if is_being_thrown:
 		is_being_thrown = false
-		print("HIT!")
+	
 		if body.has_method("damage"):
 			body.damage()
-			print("did damage")
+
 

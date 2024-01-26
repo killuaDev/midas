@@ -8,29 +8,28 @@ var rigid_body: RigidBody3D = self
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("ItemBody is RigidBody3D: ", self is RigidBody3D)
+	if not body_entered.is_connected(_on_body_entered):
+		body_entered.connect(_on_body_entered)
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+func _physics_process(delta):
+	if sleeping:
+		is_being_thrown = false
 
 func turn_gold():
 	if golder:
 		golder.turn_gold()
 	
 func throw():
+	print(name, " being thrown")
 	is_being_thrown = true
-	print('being thrown')
-	print('collision mask when being thrown: ', collision_mask)
 
 func _on_body_entered(body: Node):
-	print("entered body_shape: ", body.name)
-	print("layer of that body: ", body.collision_layer)
-	print("apple's mask: ", collision_mask)
+	print(name, " collided with ", body)
 	if is_being_thrown:
-		is_being_thrown = false
-		print("HIT!")
 		if body.has_method("damage"):
 			body.damage()
-			print("did damage")
+			is_being_thrown = false
+
 

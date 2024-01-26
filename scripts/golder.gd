@@ -15,8 +15,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if Input.is_action_just_pressed("turn_everything_gold"):
-		turn_gold()
+	pass
 
 func turn_gold():
 	for mesh in meshes as Array[MeshInstance3D]:

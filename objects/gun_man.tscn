@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cyoqpinx3d1rh"]
+[gd_scene load_steps=7 format=3 uid="uid://cyoqpinx3d1rh"]
 
 [ext_resource type="PackedScene" uid="uid://bbf8k6lf4kwmp" path="res://objects/pistol.tscn" id="1_igx0c"]
 [ext_resource type="Script" path="res://objects/gun_man.gd" id="1_uv76p"]
@@ -7,6 +7,8 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ii6a4"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_llhhb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qsa3o"]
 
 [node name="GunMan" type="CharacterBody3D" node_paths=PackedStringArray("held_item")]
 collision_layer = 8
@@ -38,5 +40,6 @@ one_shot = true
 [node name="MeshInstance3D" type="MeshInstance3D" parent="golder"]
 mesh = SubResource("CapsuleMesh_llhhb")
 skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_qsa3o")
 
 [connection signal="timeout" from="AggroTimer" to="." method="_on_aggro_timer_timeout"]
